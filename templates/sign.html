@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
+        </script>
+
+    <title>맛집 일기 회원가입</title>
+
+    <style>
+        .bg_sign_up {
+            background-color: beige;
+            width: 50%;
+            height: 700px;
+            background-size: cover;
+            font-size: 20px;
+            padding: 340px 0px 340px 0px;
+            text-align: center;
+            float: left;
+        }
+
+        .sign_up {
+            text-align: center;
+            padding: 340px 0px 340px 0px;
+        }
+
+        .error {
+            font-size: 1px;
+            color: green;
+
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.4.1.js"></script>
+    <script>
+        function check_dup_id() {
+            $('#user_id').change(function () {
+                $('#check_id_sucess').hide()
+                $('#check_dup_id').show()
+                $('#user_id').attr("check_result", "again");
+            })
+
+            if ($('#user_id').val() == '') {
+                alert('아이디를 입력하세요.')
+                return;
+            }
+
+            let user_id = $('#user_id').val()
+            let formData = new FormData()
+            formData.append('user_id_give', user_id)
+            fetch('/yummy/check_dup', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
+                let check = data['result']
+                
+                if (check == "again"){
+                    alert("중복되는 아이디 입니다.")
+                    document.getElementById('user_id').value=null
+                    document.getElementById('user_id').focus()
+                    return
+                }else{
+                    alert("사용 가능한 아이디 입니다.")
+                    $('#user_id').attr("check_result","pass")
+                    $('#check_dup_id').hide()
+                    $('#check_id_success').show()
+                    return
+                }
+            })
+        }
+        function check_sign_up() {
+            let user_id = $('#user_id').val()
+            let password = $('#password').val()
+            let check_password = $('#check_password').val()
+            let check = true
+            // id 체크
+            if ($('#user_id').attr("check_result") == "again"){
+                alert("아이디 중복 검사를 해주세요.")
+                check = false
+            }else {
+                document.getElementById('user_id_error').innerHTML = ""
+            }
+            if (user_id == "") {
+                document.getElementById('user_id_error').innerHTML = "아이디를 입력하세요."
+                check = false
+            } else {
+                document.getElementById('user_id_error').innerHTML = ""
+            }
+            // 비밀번호 체크 - 동일한지
+            if (password != check_password) {
+                document.getElementById('password_error').innerHTML = ""
+                document.getElementById('check_password_error').innerHTML = "비밀번호가 동일하지 않습니다."
+                check = false
+            } else {
+                document.getElementById('password_error').innerHTML = ""
+                document.getElementById('check_password_error').innerHTML = ""
+            }
+            // 비밀번호 체크 - 비어있는지
+            if (password == "") {
+                document.getElementById('password_error').innerHTML = "비밀번호를 입력해주세요."
+                check = false
+            } else {
+                document.getElementById('password_error').innerHTML = ""
+            }
+            // 비밀번호 체크 - 4자리 미만인지
+            if (password.length < 4) {
+                document.getElementById('password_error').innerHTML = "비밀번호를 4자리 이상 입력해주세요."
+                check = false
+            } else {
+                document.getElementById('password_error').innerHTML = ""
+            }
+
+
+            if (check) {
+                document.getElementById('user_id_error').innerHTML = ""
+                document.getElementById('password_error').innerHTML = ""
+                document.getElementById('check_password_error').innerHTML = ""
+                sign_up()
+            }
+        }
+        function sign_up() {
+            let user_id = $('#user_id').val()
+            let password = $('#password').val()
+
+            let formData = new FormData()
+            formData.append('user_id_give', user_id)
+            formData.append('password_give', password)
+            fetch('/yummy/sign_up', { method: "POST", body: formData, }).then((res) => res.json()).then((data) => {
+                alert(data["result"]);
+                window.location.replace('post')
+            });
+        }
+    </script>
+</head>
+
+<body>
+    <div class="bg_sign_up">
+        <h1>SIGN UP</h1>
+    </div>
+    <div class="sign_up">
+        <div class="title">
+            <h1 style="font-size: 21px;"></h1>
+        </div>
+        <div class="id">
+            아이디 = <input id="user_id" check_result="again" id="check_result": type="text" placeholder="사용하실 ID를 입력해 주세요.">
+            <button id="check_dup_id" onclick="check_dup_id()">중복 체크</button>
+            <img id="id_check_sucess" style="display: none;">
+            <div id="user_id_error" class="error"></div>
+        </div>
+        <div class="password">
+            비밀번호 = <input id="password" type="password" placeholder="비밀번호를 입력해 주세요.">
+            <div id="password_error" class="error"></div>
+        </div>
+        <div class="check_password">
+            비밀번호 확인 = <input id="check_password" type="password" placeholder="비밀번호를 다시 입력해 주세요.">
+            <div id="check_password_error" class="error"></div>
+        </div>
+        <div class="signUp">
+            <button id="sign_up_Button" onclick="check_sign_up()">가입하기</button>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>
