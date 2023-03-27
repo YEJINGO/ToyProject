@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+
+    <title>댓글 페이지</title>
+
+    <meta property="og:title" content="아이유 팬명록" />
+    <meta property="og:description" content="아티스트에게 응원 한마디!" />
+    <meta property="og:image" content="https://talkimg.imbc.com/TVianUpload/tvian/TViews/image/2022/09/18/bbe132a9-f050-4f38-b871-42d4cbd3af67.jpg" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@200;300;400;500;600;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        font-family: "Noto Serif KR", serif;
+      }
+
+      .mypost {
+        width: 95%;
+        max-width: 500px;
+        margin: 20px auto 20px auto;
+
+        box-shadow: 0px 0px 3px 0px black;
+        padding: 20px;
+      }
+
+      .mypost > button {
+        margin-top: 15px;
+      }
+
+      .mycards {
+        width: 95%;
+        max-width: 500px;
+        margin: auto;
+      }
+
+      .col {
+        margin: 20px auto 0px auto;
+        width: 95%;
+        max-width: 500px;
+      }
+
+      .mycards > .card {
+        margin-top: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+    <script>
+      $(document).ready(function () {
+        set_temp();
+        show_comment();
+      });
+      function set_temp() {
+        fetch("http://spartacodingclub.shop/sparta_api/weather/seoul")
+          .then((res) => res.json())
+          .then((data) => {
+
+            let temp = (data['temp'])
+            $('#temp').text(temp)
+          });
+      }
+      function save_comment() {
+        let name = $('#name').val()
+        let comment = $('#comment').val()
+        let formData = new FormData();
+
+        formData.append("name_give", name);
+        formData.append("comment_give", comment);
+
+
+        fetch("/guestbook", { method: "POST", body: formData })
+          .then((res) => res.json())
+          .then((data) => {
+            //console.log(data)
+            alert(data["msg"]);
+            window.location.reload()
+          });
+      }
+      function show_comment() {
+        fetch("/guestbook")
+          .then((res) => res.json())
+          .then((data) => {
+            let rows = data['result']
+            $('#comment-list').empty()
+            rows.forEach((a)=>{
+                let name = a['name']
+                let comment = a['comment']
+
+                let temp_html = ` <div class="card">
+                                    <div class="card-body">
+                                    <blockquote class="blockquote mb-0">
+                                        <p>${comment}</p>
+                                        <footer class="blockquote-footer">${name}</footer>
+                                    </blockquote>
+                                    </div>
+                                </div>`
+                $('#comment-list').append(temp_html)                
+                
+            })
+            
+          });
+      }
+    </script>
+  </head>
+  <body>
+    <div class="col">
+      <div class="card h-100">
+        <img
+          src="https://movie-phinf.pstatic.net/20210728_221/1627440327667GyoYj_JPEG/movie_image.jpg"
+          class="card-img-top"
+        />
+        <div class="card-body">
+          <h5 class="card-title">영화 제목이 들어갑니다</h5>
+          <p class="card-text">여기에 영화에 대한 설명이 들어갑니다.</p>
+          <p>⭐⭐⭐</p>
+          <p class="mycomment">나의 한줄 평을 씁니다</p>
+        </div>
+      </div>
+    </div>
+    <div class="mypost">
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="name" placeholder="url" />
+        <label for="floatingInput">닉네임</label>
+      </div>
+      <div class="form-floating">
+        <textarea
+          class="form-control"
+          placeholder="Leave a comment here"
+          id="comment"
+          style="height: 100px"
+        ></textarea>
+        <label for="floatingTextarea2">응원댓글</label>
+      </div>
+      <button onclick="save_comment()" type="button" class="btn btn-dark">
+        댓글 남기기
+      </button>
+    </div>
+    <div class="mycards" id="comment-list">
+      <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>새로운 앨범 너무 멋져요!</p>
+            <footer class="blockquote-footer">호빵맨</footer>
+          </blockquote>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>새로운 앨범 너무 멋져요!</p>
+            <footer class="blockquote-footer">호빵맨</footer>
+          </blockquote>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <blockquote class="blockquote mb-0">
+            <p>새로운 앨범 너무 멋져요!</p>
+            <footer class="blockquote-footer">호빵맨</footer>
+          </blockquote>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
