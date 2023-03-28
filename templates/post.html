@@ -12,7 +12,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 
-    <title>나의 탐방일지</title>
+    <title>나의 맛집일지</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 
@@ -87,24 +87,15 @@
             margin-right: 10px;
         }
 
-        .login_box {
-            float: left;
-            margin: 0px 15px 0px 0px;
-        }
-
-        .login_box2 {
-            float: left;
-            margin: 0px 20px 0px 0px;
-        }
         .right_box{
             float: right;
-            margin: 0px 20px 0px 0px;
+            margin: 0px 20px 5px 0px;
             background-color: white;
             border-color:black;        
-            border-width: 1px;    
+            border-width: 1px;
         }
         .head{
-            margin: 10px 10px 10px 10px;
+            margin: 10px 10px 10px 30px;
         }
     </style>
     <script>
@@ -235,20 +226,12 @@
 
 <body>
     <div class="head">
-        
-        <h5 class="login_box">ID</h5>
-        <input class="login_box2" type="text">
-        <h5 class="login_box">PW</h5>
-        <input class="login_box2"" type=" text">
-        <input class="btn btn-primary" type="submit" value="Submit">
-
         <button class = "right_box" >로그아웃</button>
+        <div class = "right_box">아이디 표시</div>
         <button class = "right_box" onclick = "listing()" type="submit">목록</button>
         <button class = "right_box" onclick = "yummy_searching()" type="submit">검색</button>
         <input class ="right_box"  id="searching_value"/>
         <button class = "right_box" onclick="open_box()">맛집 기록하기 </button>
-        
-        
     </div>
     <div class="mytitle">
         <h1>맛집 일지</h1>
