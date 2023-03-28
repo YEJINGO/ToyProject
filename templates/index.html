@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <!doctype html>
 <html lang="en">
 
@@ -12,7 +13,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 
-    <title>스파르타 피디아</title>
+    <title>맛집 일기</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 
@@ -22,14 +23,13 @@
         }
 
         .mytitle {
-            width: 100%;
+            width: 50%;
             height: 250px;
 
-            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://movie-phinf.pstatic.net/20210715_95/1626338192428gTnJl_JPEG/movie_image.jpg');
             background-position: center;
             background-size: cover;
 
-            color: white;
+            color:  black;
 
             display: flex;
             flex-direction: column;
@@ -37,166 +37,45 @@
             justify-content: center;
         }
 
-        .mytitle>button {
-            width: 200px;
-            height: 50px;
+        .sign_in {
+            text-align: center;
 
-            background-color: transparent;
-            color: white;
+            width: 50%;
 
-            border-radius: 50px;
-            border: 1px solid white;
-
-            margin-top: 10px;
-        }
-
-        .mytitle>button:hover {
-            border: 2px solid white;
-        }
-
-        .mycomment {
-            color: gray;
-        }
-
-        .mycards {
-            margin: 20px auto 0px auto;
-            width: 95%;
-            max-width: 1200px;
-        }
-
-        .mypost {
-            width: 95%;
-            max-width: 500px;
-            margin: 20px auto 0px auto;
-            padding: 20px;
-            box-shadow: 0px 0px 3px 0px gray;
-
-            display: none;
-        }
-
-        .mybtns {
+            margin-top: 150px;
             display: flex;
-            flex-direction: row;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
 
-            margin-top: 20px;
+            float: left;
         }
+        .sign_in>.input {
+            margin: 0px 0px 10px 0px;
 
-        .mybtns>button {
-            margin-right: 10px;
+            border-radius: 50px;
         }
     </style>
     <script>
-        $(document).ready(function () {
-            listing();
-        });
-
-        function listing() {
-            fetch('/movie').then((res) => res.json()).then((data) => {
-                let rows = data['result']
-                console.log(rows)
-                rows.forEach((a) => {
-                    let comment = a['comment']
-                    let title = a['title']
-                    let desc = a['desc']
-                    let image = a['image']
-                    let star = a['star']
-
-                    let star_repeat = '⭐'.repeat(star)
-
-                    let temp_html = `<div class="col">
-                                        <div class="card h-100">
-                                            <img src="${image}"  class="card-img-top">
-                                            <div class="card-body">
-                                                <h5 class="card-title">${title}</h5>
-                                                <p class="card-text">${desc}</p>
-                                                <p> ${star_repeat}</p>
-                                                <p class="mycomment">${comment}</p>
-                                                <button type="button" onclick="movie_delete(this)" class="btn btn-secondary" id="${a['_id']}">삭제</button>
-                                            </div>
-                                        </div>
-                                    </div>`
-                    $('#cards-box').append(temp_html)
-
-                })
-            })
-        }
-        function movie_delete(e) {
-            if (confirm('삭제하시겠습니까?')) {
-                console.log(e);
-                let id = e.id;
-                console.log(id);
-                fetch('/movie/delete/' + id, { method: "DELETE" }).then((res) => res.json()).then((data) => {
-                    alert(data['msg'])
-                    window.location.reload()
-                })
-            }
-        }
-        function posting() {
-
-            let url = $('#url').val()
-            let comment = $('#comment').val()
-            let star = $('#star').val()
-
-
-            let formData = new FormData();
-            formData.append("url_give", url);
-            formData.append("comment_give", comment);
-            formData.append("star_give", star);
-
-
-            fetch('/movie', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
-                alert(data['msg'])
-                window.location.reload()
-            })
-        }
-
-        function open_box() {
-            $('#post-box').show()
-        }
-        function close_box() {
-            $('#post-box').hide()
-        }
+        
     </script>
 </head>
 
 <body>
+    <div class="sign_in">
+        <div class="input">
+            <input type="text" id="id" placeholder="아이디">
+        </div>
+        <div class="input">
+            <input type="password" id="password" placeholder="비밀번호">
+        </div>
+        <div>
+            <button class="button is-primary" onclick="login()">로그인</button>
+            <button class="button is-primary" onclick="location.href='/sign'">회원가입</button>
+        </div>
+    </div>
     <div class="mytitle">
-        <h1>내 생애 최고의 영화들</h1>
-        <button onclick="open_box()">영화 기록하기</button>
-    </div>
-    <div class="mypost" id="post-box">
-        <div class="form-floating mb-3">
-            <input id="url" type="email" class="form-control" placeholder="name@example.com">
-            <label>영화URL</label>
-        </div>
-        <div class="input-group mb-3">
-            <label class="input-group-text" for="inputGroupSelect01">별점</label>
-            <select class="form-select" id="star">
-                <option selected>-- 선택하기 --</option>
-                <option value="1">⭐</option>
-                <option value="2">⭐⭐</option>
-                <option value="3">⭐⭐⭐</option>
-                <option value="4">⭐⭐⭐⭐</option>
-                <option value="5">⭐⭐⭐⭐⭐</option>
-            </select>
-            <button onclick="open_box()">영화 기록하기</button>
-        </div>
-        <div class="form-floating">
-            <textarea id="comment" class="form-control" placeholder="Leave a comment here"></textarea>
-            <label for="floatingTextarea2">코멘트</label>
-        </div>
-        <div class="mybtns">
-            <button onclick="posting()" type="button" class="btn btn-dark">기록하기</button>
-            <button onclick="close_box()" type="button" class="btn btn-outline-dark">닫기</button>
-        </div>
-    </div>
-    <div class="mycards">
-        <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
-
-
-        </div>
+        <h1>맛집 일기</h1>
     </div>
 </body>
 
