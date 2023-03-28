@@ -131,7 +131,7 @@
             formData.append('password_give', password)
             fetch('/yummy/sign_up', { method: "POST", body: formData, }).then((res) => res.json()).then((data) => {
                 alert(data["result"]);
-                window.location.replace('post')
+                window.location.replace('/')
             });
         }
     </script>
