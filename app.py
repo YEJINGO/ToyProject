@@ -62,7 +62,7 @@ def yummy_post():
     db.yummy.insert_one(doc)
 
 
-    return jsonify({'msg':'저장 완료!'})
+    return jsonify({'msg':'저장 완료>_<'})
 
 @app.route("/yummy", methods=["GET"])
 def yummy_get():
