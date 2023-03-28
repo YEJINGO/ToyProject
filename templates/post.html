@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <title>나의 탐방일지</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Gowun Dodum', sans-serif;
+        }
+
+        .mytitle {
+            width: 100%;
+            height: 250px;
+
+            background-image: url('https://rimage.gnst.jp/rest/img/c54288hs0000/s_0n5n.jpg?dt=1502040078');
+            background-position: center;
+            background-size:contain;
+
+            color: white;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mytitle>button {
+            width: 200px;
+            height: 50px;
+
+            background-color: transparent;
+            color: white;
+
+            border-radius: 50px;
+            border: 1px solid white;
+
+            margin-top: 10px;
+        }
+
+        .mytitle>button:hover {
+            border: 2px solid white;
+        }
+
+        .mycomment {
+            color: gray;
+        }
+
+        .mycards {
+            margin: 20px auto 0px auto;
+            width: 95%;
+            max-width: 1200px;
+        }
+
+        .mypost {
+            width: 95%;
+            max-width: 500px;
+            margin: 20px auto 0px auto;
+            padding: 20px;
+            box-shadow: 0px 0px 3px 0px gray;
+
+            display: none;
+        }
+
+        .mybtns {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+
+            margin-top: 20px;
+        }
+
+        .mybtns>button {
+            margin-right: 10px;
+        }
+
+        .login_box {
+            float: left;
+            margin: 0px 15px 0px 0px;
+        }
+
+        .login_box2 {
+            float: left;
+            margin: 0px 20px 0px 0px;
+        }
+        .right_box{
+            float: right;
+            margin: 0px 20px 0px 0px;
+            background-color: white;
+            border-color:black;        
+            border-width: 1px;    
+        }
+        .head{
+            margin: 10px 10px 10px 10px;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            listing();
+        });
+
+        function yummy_searching() {
+            let searching_value = $('#searching_value').val()
+
+            let formData = new FormData();
+            formData.append("searching_value", searching_value);
+
+            fetch('/yummy/search', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
+                console.log(data)
+                $('#cards-box').empty()
+
+                let rows = data['result']
+                console.log(rows)
+                rows.forEach((a) => {
+                    let comment = a['comment']
+                    let title = a['title']
+                    let desc = a['desc']
+                    let image = a['image']
+                    let address = a['address']
+                    let city = a['city']
+                    let country = a['country']
+
+                    let star = a['star']
+
+                    let star_repeat = '⭐'.repeat(star)
+
+                    let temp_html = `<div class="col">
+                                        <div class="card h-10   ">
+                                            <img src="${image}"  class="card-img-top">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${title}</h5>
+                                                <p class="card-text">${desc}</p>
+                                                <p>${address}</p>
+                                                <p>${country}</p>
+                                                <p>${city}</p>
+                                                <p> ${star_repeat}</p>
+                                                <p class="mycomment">${comment}</p>
+                                                <button type="button" onclick="movie_delete(this)" class="btn btn-secondary" id="${a['_id']}">삭제</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                    $('#cards-box').append(temp_html)
+            })
+        })
+    }
+
+        function listing() {
+            fetch('/yummy').then((res) => res.json()).then((data) => {
+                let rows = data['result']
+                console.log(rows)
+                $('#cards-box').empty()
+                rows.forEach((a) => {
+                    let comment = a['comment']
+                    let title = a['title']
+                    let desc = a['desc']
+                    let image = a['image']
+                    let address = a['address']
+                    let city = a['city']
+                    let country = a['country']
+
+                    let star = a['star']
+
+                    let star_repeat = '⭐'.repeat(star)
+
+                    let temp_html = `<div class="col">
+                                        <div class="card h-10   ">
+                                            <img src="${image}"  class="card-img-top">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${title}</h5>
+                                                <p class="card-text">${desc}</p>
+                                                <p>${address}</p>
+                                                <p>${country}</p>
+                                                <p>${city}</p>
+                                                <p> ${star_repeat}</p>
+                                                <p class="mycomment">${comment}</p>
+                                                <button type="button" onclick="movie_delete(this)" class="btn btn-secondary" id="${a['_id']}">삭제</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                    $('#cards-box').append(temp_html)
+                })
+            })
+        }
+        function movie_delete(e) {
+            if (confirm('삭제하시겠습니까?')) {
+                console.log(e);
+                let id = e.id;
+                console.log(id);
+                fetch('/movie/delete/' + id, { method: "DELETE" }).then((res) => res.json()).then((data) => {
+                    alert(data['msg'])
+                    window.location.reload()
+                })
+            }
+        }
+        function posting() {
+
+            let url = $('#url').val()
+            let comment = $('#comment').val()
+            let star = $('#star').val()
+
+
+            let formData = new FormData();
+            formData.append("url_give", url);
+            formData.append("comment_give", comment);
+            formData.append("star_give", star);
+
+
+            fetch('/yummy/post', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
+                alert(data['msg'])
+                window.location.reload()
+            })
+        }
+
+        function open_box() {
+            $('#post-box').show()
+        }
+        function close_box() {
+            $('#post-box').hide()
+        }
+    </script>
+</head>
+
+<body>
+    <div class="head">
+        
+        <h5 class="login_box">ID</h5>
+        <input class="login_box2" type="text">
+        <h5 class="login_box">PW</h5>
+        <input class="login_box2"" type=" text">
+        <input class="btn btn-primary" type="submit" value="Submit">
+
+        <button class = "right_box" >로그아웃</button>
+        <button class = "right_box" onclick = "listing()" type="submit">목록</button>
+        <button class = "right_box" onclick = "yummy_searching()" type="submit">검색</button>
+        <input class ="right_box"  id="searching_value"/>
+        <button class = "right_box" onclick="open_box()">맛집 기록하기 </button>
+        
+        
+    </div>
+    <div class="mytitle">
+        <h1>맛집 일지</h1>
+        <button onclick="open_box()">맛집 기록하기 </button>
+    </div>
+    <div class="mypost" id="post-box">
+        <div class="form-floating mb-3">
+            <input id="url" type="email" class="form-control" placeholder="name@example.com">
+            <label>맛집URL</label>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01">별점</label>
+            <select class="form-select" id="star">
+                <option selected>-- 선택하기 --</option>
+                <option value="1">⭐</option>
+                <option value="2">⭐⭐</option>
+                <option value="3">⭐⭐⭐</option>
+                <option value="4">⭐⭐⭐⭐</option>
+                <option value="5">⭐⭐⭐⭐⭐</option>
+            </select>
+        </div>
+        <div class="form-floating">
+            <textarea id="comment" class="form-control" placeholder="Leave a comment here"></textarea>
+            <label for="floatingTextarea2">나의 맛평가는?!</label>
+        </div>
+        <div class="mybtns">
+            <button onclick="posting()" type="button" class="btn btn-dark">기록하기</button>
+            <button onclick="close_box()" type="button" class="btn btn-outline-dark">닫기</button>
+        </div>
+    </div>
+    <div class="mycards">
+        <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
+        </div>
+    </div>
+</body>
+
+</html>
