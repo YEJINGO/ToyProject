@@ -12,7 +12,7 @@
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
 
-    <title>스파르타 피디아</title>
+    <title>나의 탐방일지</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap" rel="stylesheet">
 
@@ -25,9 +25,9 @@
             width: 100%;
             height: 250px;
 
-            background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://movie-phinf.pstatic.net/20210715_95/1626338192428gTnJl_JPEG/movie_image.jpg');
+            background-image: url('https://rimage.gnst.jp/rest/img/c54288hs0000/s_0n5n.jpg?dt=1502040078');
             background-position: center;
-            background-size: cover;
+            background-size:contain;
 
             color: white;
 
@@ -86,14 +86,42 @@
         .mybtns>button {
             margin-right: 10px;
         }
+
+        .login_box {
+            float: left;
+            margin: 0px 15px 0px 0px;
+        }
+
+        .login_box2 {
+            float: left;
+            margin: 0px 20px 0px 0px;
+        }
+        .right_box{
+            float: right;
+            margin: 0px 20px 0px 0px;
+            background-color: white;
+            border-color:black;        
+            border-width: 1px;    
+        }
+        .head{
+            margin: 10px 10px 10px 10px;
+        }
     </style>
     <script>
         $(document).ready(function () {
             listing();
         });
 
-        function listing() {
-            fetch('/movie').then((res) => res.json()).then((data) => {
+        function yummy_searching() {
+            let searching_value = $('#searching_value').val()
+
+            let formData = new FormData();
+            formData.append("searching_value", searching_value);
+
+            fetch('/yummy/search', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
+                console.log(data)
+                $('#cards-box').empty()
+
                 let rows = data['result']
                 console.log(rows)
                 rows.forEach((a) => {
@@ -101,16 +129,23 @@
                     let title = a['title']
                     let desc = a['desc']
                     let image = a['image']
+                    let address = a['address']
+                    let city = a['city']
+                    let country = a['country']
+
                     let star = a['star']
 
                     let star_repeat = '⭐'.repeat(star)
 
                     let temp_html = `<div class="col">
-                                        <div class="card h-100">
+                                        <div class="card h-10   ">
                                             <img src="${image}"  class="card-img-top">
                                             <div class="card-body">
                                                 <h5 class="card-title">${title}</h5>
                                                 <p class="card-text">${desc}</p>
+                                                <p>${address}</p>
+                                                <p>${country}</p>
+                                                <p>${city}</p>
                                                 <p> ${star_repeat}</p>
                                                 <p class="mycomment">${comment}</p>
                                                 <button type="button" onclick="movie_delete(this)" class="btn btn-secondary" id="${a['_id']}">삭제</button>
@@ -118,7 +153,44 @@
                                         </div>
                                     </div>`
                     $('#cards-box').append(temp_html)
+            })
+        })
+    }
 
+        function listing() {
+            fetch('/yummy').then((res) => res.json()).then((data) => {
+                let rows = data['result']
+                console.log(rows)
+                $('#cards-box').empty()
+                rows.forEach((a) => {
+                    let comment = a['comment']
+                    let title = a['title']
+                    let desc = a['desc']
+                    let image = a['image']
+                    let address = a['address']
+                    let city = a['city']
+                    let country = a['country']
+
+                    let star = a['star']
+
+                    let star_repeat = '⭐'.repeat(star)
+
+                    let temp_html = `<div class="col">
+                                        <div class="card h-10   ">
+                                            <img src="${image}"  class="card-img-top">
+                                            <div class="card-body">
+                                                <h5 class="card-title">${title}</h5>
+                                                <p class="card-text">${desc}</p>
+                                                <p>${address}</p>
+                                                <p>${country}</p>
+                                                <p>${city}</p>
+                                                <p> ${star_repeat}</p>
+                                                <p class="mycomment">${comment}</p>
+                                                <button type="button" onclick="movie_delete(this)" class="btn btn-secondary" id="${a['_id']}">삭제</button>
+                                            </div>
+                                        </div>
+                                    </div>`
+                    $('#cards-box').append(temp_html)
                 })
             })
         }
@@ -146,7 +218,7 @@
             formData.append("star_give", star);
 
 
-            fetch('/movie', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
+            fetch('/yummy/post', { method: "POST", body: formData }).then((res) => res.json()).then((data) => {
                 alert(data['msg'])
                 window.location.reload()
             })
@@ -162,14 +234,30 @@
 </head>
 
 <body>
+    <div class="head">
+        
+        <h5 class="login_box">ID</h5>
+        <input class="login_box2" type="text">
+        <h5 class="login_box">PW</h5>
+        <input class="login_box2"" type=" text">
+        <input class="btn btn-primary" type="submit" value="Submit">
+
+        <button class = "right_box" >로그아웃</button>
+        <button class = "right_box" onclick = "listing()" type="submit">목록</button>
+        <button class = "right_box" onclick = "yummy_searching()" type="submit">검색</button>
+        <input class ="right_box"  id="searching_value"/>
+        <button class = "right_box" onclick="open_box()">맛집 기록하기 </button>
+        
+        
+    </div>
     <div class="mytitle">
-        <h1>내 생애 최고의 영화들</h1>
-        <button onclick="open_box()">영화 기록하기</button>
+        <h1>맛집 일지</h1>
+        <button onclick="open_box()">맛집 기록하기 </button>
     </div>
     <div class="mypost" id="post-box">
         <div class="form-floating mb-3">
             <input id="url" type="email" class="form-control" placeholder="name@example.com">
-            <label>영화URL</label>
+            <label>맛집URL</label>
         </div>
         <div class="input-group mb-3">
             <label class="input-group-text" for="inputGroupSelect01">별점</label>
@@ -181,11 +269,10 @@
                 <option value="4">⭐⭐⭐⭐</option>
                 <option value="5">⭐⭐⭐⭐⭐</option>
             </select>
-            <button onclick="open_box()">영화 기록하기</button>
         </div>
         <div class="form-floating">
             <textarea id="comment" class="form-control" placeholder="Leave a comment here"></textarea>
-            <label for="floatingTextarea2">코멘트</label>
+            <label for="floatingTextarea2">나의 맛평가는?!</label>
         </div>
         <div class="mybtns">
             <button onclick="posting()" type="button" class="btn btn-dark">기록하기</button>
@@ -194,8 +281,6 @@
     </div>
     <div class="mycards">
         <div class="row row-cols-1 row-cols-md-4 g-4" id="cards-box">
-
-
         </div>
     </div>
 </body>
